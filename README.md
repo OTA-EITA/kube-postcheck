@@ -1,6 +1,7 @@
 # kube-postcheck
 
 [![ci](https://github.com/OTA-EITA/kube-postcheck/actions/workflows/ci.yml/badge.svg)](https://github.com/OTA-EITA/kube-postcheck/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/OTA-EITA/kube-postcheck/badge)](https://securityscorecards.dev/viewer/?uri=github.com/OTA-EITA/kube-postcheck)
 
 Kubernetes クラスタの構築直後や変更作業の後に、「本当に正常か」を一発で確認するための CLI です。
 ヘルスチェックとセキュリティチェックをまとめて実行し、問題があれば終了コード 1 を返すので、CI や作業手順書のゲートとしてそのまま使えます。
