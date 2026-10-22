@@ -1,0 +1,44 @@
+# Read-only permissions needed by kube-postcheck.
+# Use this instead of cluster-admin when running it from CI or a Job.
+#
+# The "certificates" check needs list on Secrets. If you do not want to grant
+# that, remove the secrets rule and run with --skip certificates.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-postcheck
+  namespace: kube-postcheck
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-postcheck
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "pods", "services", "persistentvolumeclaims"]
+    verbs: ["list"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["list"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["list"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterrolebindings"]
+    verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-postcheck
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-postcheck
+subjects:
+  - kind: ServiceAccount
+    name: kube-postcheck
+    namespace: kube-postcheck
