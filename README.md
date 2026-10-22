@@ -30,8 +30,16 @@ It runs health and security checks and exits non-zero when something needs atten
 
 ## インストール
 
+[Releases](https://github.com/OTA-EITA/kube-postcheck/releases) から OS に合ったバイナリをダウンロードするか、Go でインストールします。
+
 ```sh
 go install github.com/OTA-EITA/kube-postcheck/cmd/kube-postcheck@latest
+```
+
+コンテナイメージもあります（distroless、非 root で動作）。
+
+```sh
+docker run --rm -v ~/.kube:/home/nonroot/.kube:ro ghcr.io/ota-eita/kube-postcheck:latest --help
 ```
 
 またはソースからビルドします。
