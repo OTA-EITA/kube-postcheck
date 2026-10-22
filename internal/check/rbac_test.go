@@ -40,6 +40,7 @@ func TestRBACCheckClean(t *testing.T) {
 	fs := runCheck(t, RBACCheck{}, testOptions(),
 		adminBinding("cluster-admin", rbacv1.Subject{Kind: rbacv1.GroupKind, Name: "system:masters"}),
 		adminBinding("kube-system-sa", rbacv1.Subject{Kind: rbacv1.ServiceAccountKind, Namespace: "kube-system", Name: "clusterrole-aggregation-controller"}),
+		adminBinding("kubeadm:cluster-admins", rbacv1.Subject{Kind: rbacv1.GroupKind, Name: "kubeadm:cluster-admins"}),
 	)
 	expectStatus(t, fs, "cluster", StatusPass)
 }
