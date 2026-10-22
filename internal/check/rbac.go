@@ -49,9 +49,16 @@ func (c RBACCheck) Run(ctx context.Context, cs kubernetes.Interface, _ Options) 
 	return out, nil
 }
 
+// kubeadmAdminsGroup is bound to cluster-admin by kubeadm 1.29+ for the
+// credentials in admin.conf, so it is part of a standard installation.
+const kubeadmAdminsGroup = "kubeadm:cluster-admins"
+
 func isSystemSubject(s rbacv1.Subject) bool {
 	if s.Kind == rbacv1.ServiceAccountKind {
 		return s.Namespace == "kube-system"
+	}
+	if s.Kind == rbacv1.GroupKind && s.Name == kubeadmAdminsGroup {
+		return true
 	}
 	return strings.HasPrefix(s.Name, "system:")
 }
