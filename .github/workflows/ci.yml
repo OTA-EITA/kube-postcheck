@@ -55,6 +55,23 @@ jobs:
       - name: Run kube-postcheck
         run: ./bin/kube-postcheck --output markdown | tee -a "$GITHUB_STEP_SUMMARY"
 
+  e2e-score:
+    # Deploys the example workloads to a kind cluster and scores them with "score --cluster".
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: go.mod
+      - uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1
+        with:
+          cluster_name: score
+      - run: make build
+      - run: e2e/score.sh
+
   gha-guard:
     # Audits this repository's workflows with https://github.com/OTA-EITA/gha-guard.
     runs-on: ubuntu-latest
