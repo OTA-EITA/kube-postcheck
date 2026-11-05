@@ -22,6 +22,7 @@ archives:
       - README.md
       - LICENSE
       - deploy/rbac.yaml
+      - examples/*
 
 checksum:
   name_template: checksums.txt
