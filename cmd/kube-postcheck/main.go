@@ -1,6 +1,9 @@
 // Command kube-postcheck runs health and security checks against a Kubernetes
 // cluster right after it has been built or changed, and exits non-zero when
 // something needs attention so it can gate CI pipelines and runbooks.
+//
+// "kube-postcheck score" scores workloads for production readiness
+// (reliability, efficiency and security) from manifests or a live cluster.
 package main
 
 import (
@@ -60,6 +63,11 @@ func parseFlags(args []string, stderr io.Writer) (config, error) {
 	cfg := config{exemptNS: csvFlag{vals: def.SecurityExemptNamespaces}}
 	fs := flag.NewFlagSet("kube-postcheck", flag.ContinueOnError)
 	fs.SetOutput(stderr)
+	fs.Usage = func() {
+		fmt.Fprintln(stderr, "usage: kube-postcheck [flags]")
+		fmt.Fprintln(stderr, "       kube-postcheck score [flags] FILE|DIR|- ...   score workloads (kube-postcheck score --help)")
+		fs.PrintDefaults()
+	}
 	fs.StringVar(&cfg.kubeconfig, "kubeconfig", "", "path to kubeconfig (defaults to $KUBECONFIG or ~/.kube/config)")
 	fs.StringVar(&cfg.kubeContext, "context", "", "kubeconfig context to use")
 	fs.StringVar(&cfg.output, "output", "table", "output format: table, json or markdown")
@@ -89,6 +97,9 @@ func parseFlags(args []string, stderr io.Writer) (config, error) {
 }
 
 func run(args []string, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == "score" {
+		return runScore(args[1:], os.Stdin, stdout, stderr)
+	}
 	cfg, err := parseFlags(args, stderr)
 	if err != nil {
 		if errors.Is(err, flag.ErrHelp) {
