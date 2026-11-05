@@ -3,6 +3,9 @@
 #
 # The "certificates" check needs list on Secrets. If you do not want to grant
 # that, remove the secrets rule and run with --skip certificates.
+#
+# The batch and policy rules are for "kube-postcheck score --cluster", which
+# also reads Jobs, CronJobs and PodDisruptionBudgets.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -22,6 +25,12 @@ rules:
     verbs: ["list"]
   - apiGroups: ["apps"]
     resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["list"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
     verbs: ["list"]
   - apiGroups: ["storage.k8s.io"]
     resources: ["storageclasses"]
